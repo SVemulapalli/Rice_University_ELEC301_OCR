@@ -1,0 +1,53 @@
+% Running on Crunchbang 11 Waldorf (A Debian OS)
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy python-matplotlib libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+sudo apt-get install ocl-icd-opencl-dev
+
+%%%%%%%%%% Install Instructions for OpenCV 2.4X %%%%%%%%%%
+% Download & extract opencv-2.4.10.zip
+
+% Rename opencv-2.4.10.zip by 
+mv opencv-2.4.10.zip opencv2
+
+cd opencv2 % change directory to opencv2
+
+mkdir build % make new build directory in opencv2 directory  
+
+%%%%%%%%%% Install Instructions for OpenCV 3 %%%%%%%%%%
+
+% I do not currently recommend installing OpenCV3 as it is not in the release stage yet and a lot of functionality is broken and has not been fixed at the time of writing
+
+% Download & extract opencv-3.0.0-beta.zip
+
+% Rename opencv-3.0.0-beta.zip by 
+mv opencv-3.0.0-beta.zip opencv3
+
+cd opencv3 % change directory to opencv3
+
+mkdir build % make new build directory in opencv3 directory  
+cd build % change directory to build 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_ZLIB=ON -D BUILD_PYTHON_SUPPORT=ON ..
+
+make -j7 % Build by running 7 jobs in parallel
+
+% Go get a cup of tea, this will take a while ...
+
+sudo make install % Actually build it
+
+% If no errors occur you should be successful and have opencv installed
+
+% Test it by opening python and finding which version on opencv is installed
+
+python
+import cv2
+cv2.__version
+
+% If it says '2.4.X' then you're golden if you installed openCV2
+% If it says '3.0.0-beta' then you're golden if you installed openCV3
