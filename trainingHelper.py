@@ -78,7 +78,7 @@ def gaussianBlur(image, width=5, height=5, xStdev=0, yStdev=0): # width and heig
 # Output: 
 #	same type of image object but where each pixel has gone through binary
 # Further Reading:http://docs.opencv.org/trunk/doc/py_tutorials/py_imgproc/py_thresholding/py_thresholding.html
-def adapThreshold(image, MaxValue=255, Method=cv2.ADAPTIVE_THRESH_GAUSSIAN_C, Threshold_Type = cv2.THRESH_BINARY, Blocksize=11,c=2):
+def adapThreshold(image, MaxValue=255, Method=cv2.ADAPTIVE_THRESH_GAUSSIAN_C, Threshold_Type = cv2.THRESH_BINARY_INV, Blocksize=11,c=2):
 
 	thresh = cv2.adaptiveThreshold(image, MaxValue, Method, Threshold_Type, Blocksize, c)
 	return thresh
