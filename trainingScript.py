@@ -39,7 +39,7 @@ def manualTrainRects(image,rectangles,thresh,keys=keys):
 	responses = np.array(responses,np.float32)
 	responses = responses.reshape((responses.size,1))
 	print "Training complete"
-
+	
 	np.savetxt('testsamples.data',samples)
 	np.savetxt('testresponses.data',responses)
 	print "Saved samples & responses"
@@ -58,6 +58,7 @@ def autoTrainRects(image,rectangles,thresh,keyName=chr(127),keyInt=127,keys=keys
 	samples =  np.empty((0,100))
 	responses = []
 	character = chr(keyInt)
+	folder = 'ML/'
 
 	if keyName != character:
 		print "Error character and name does not match!"
@@ -87,9 +88,14 @@ def autoTrainRects(image,rectangles,thresh,keyName=chr(127),keyInt=127,keys=keys
 		responses = np.array(responses,np.float32)
 		responses = responses.reshape((responses.size,1))
 		print "Training complete for character", character
-
-		np.savetxt('xintest/testAlpha3/'+character+'Samples.data',samples)
-		np.savetxt('xintest/testAlpha3/'+character+'Responses.data',responses)
+		
+		make_sure_path_exists(folder)
+		samplefile = folder+character+'Samples.data'
+		responsefile = folder+character+'Responses.data'
+		open(samplefile, 'a').close()
+		open(samplefile, 'a').close()
+		np.savetxt(samplefile,samples)
+		np.savetxt(samplefile,responses)
 		print "Saved samples & responses for character", character
 
 #Input: 
@@ -128,13 +134,13 @@ def autoRun(directory):
 		thresh = adapThreshold(gblur)
 		contours, hierarchy = findCountours(thresh)
 
-		rectangles = findCountourAreas(contours,1) # leave out 1 if not combining tibble
+		rectangles = findCountourAreas(contours,1) # leave out 1 if not combining tibblne
 		rectangles = removeOverlaps(rectangles)
 		rectangles = sortListedRect(rectangles)
 		rectangles = mergeT(rectangles) # combine tibble
 	
 		autoTrainRects(im, rectangles, thresh, justName, asciiKey)
 
-autoRun('MachineLearning/Alphabet')
+autoRun('Images/Alphabet')
 
 print "Training completed!"

@@ -1,7 +1,7 @@
-from os import listdir, getcwd
+from os import listdir, getcwd, makedirs
 from os.path import isfile, join, splitext
 import sys
-
+import errno
 import cv2
 import numpy as np
 import bisect 
@@ -13,6 +13,17 @@ import bisect
 def getAllFiles(directory=getcwd()):
 	onlyfiles = sorted([ f for f in listdir(directory) if isfile(join(directory,f)) ]) # only add files in directory, don't include folders
 	return onlyfiles
+
+#Input:
+# directory path
+#Output
+# If directory does not exist, create it
+def make_sure_path_exists(path):
+    try:
+        makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
 
 #Input: 
 #	path directory for a Image file 
