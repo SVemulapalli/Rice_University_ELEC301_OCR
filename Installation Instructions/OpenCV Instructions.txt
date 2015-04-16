@@ -2,16 +2,18 @@
 
 sudo apt-get update
 sudo apt-get upgrade
+sudo apt-get install unzip
 sudo apt-get install build-essential
 sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 sudo apt-get install python-dev python-numpy python-matplotlib libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
 sudo apt-get install ocl-icd-opencl-dev
 
 %%%%%%%%%% Install Instructions for OpenCV 2.4X %%%%%%%%%%
-% Download & extract opencv-2.4.10.zip
+% Download & extract opencv-2.4.10.zip through the file manager or with this command through the terminal:
+unzip opencv-2.4.10.zip -d opencv2
 
-% Rename opencv-2.4.10.zip by 
-mv opencv-2.4.10.zip opencv2
+% [Optional] Rename opencv-2.4.10.zip iff you didn't use the terminal to unzip
+mv opencv-2.4.10 opencv2
 
 cd opencv2 % change directory to opencv2
 
