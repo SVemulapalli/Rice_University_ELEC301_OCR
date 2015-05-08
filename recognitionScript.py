@@ -5,10 +5,10 @@ import trainingHelper
 
 ###############   training part    ############### 
 
-#Input: Sample file,Response File
-#
-#Output: KNearest neighboor Model made from learning from the two files
-#
+#Input: 
+#	Sample file,Response File
+#Output: 
+#	KNearest neighboor Model made from learning from the two files
 def train(samplesFile, responsesFile):
 	samples = np.loadtxt(samplesFile,np.float32)
 	responses = np.loadtxt(responsesFile,np.float32)
@@ -25,6 +25,9 @@ alphalistl = list(string.ascii_lowercase)
 alphalistC = list(string.ascii_lowercase)
 answers = alphalistC+alphalistl+numlist  
 
+#Input:
+# 	Image file
+# 	Machine Learning Training Model
 def manRec(im, model, answers = []):
 	ansLen = (len(answers) > 0)
 	ind = 0 # Answer index used to match rect to answer
@@ -34,37 +37,29 @@ def manRec(im, model, answers = []):
 
 	out = np.zeros(im.shape,np.uint8)
 	
-	
 	# Convert image to Grayscale	
 	gray = trainingHelper.color2gray(im)
 	
-	
-	# # Gaussian blur the Image to help edge detection
+	# Gaussian blur the Image to help edge detection
 	blur= trainingHelper.gaussianBlur(gray)
-	
 
-	# # Run an adaptive threshold on Grayscale Image
+	# Run an adaptive threshold on Grayscale Image
 	thresh = trainingHelper.adapThreshold(blur)
 	
-	
-	# # Find the Countours of White letters in the Black background of thresh (a grayscale image)
+	# Find the Countours of White letters in the Black background of thresh (a grayscale image)
 	contours,hierarchy = trainingHelper.findCountours(thresh)
 
-
-	# # Convert outline of Countours into  4 point rectangles
+	# Convert outline of Countours into  4 point rectangles
 	rectangles = trainingHelper.findCountourAreas(contours,5) # leave out 1 if not combining tibble
-
 	
 	# Remove the rectangles that overlap with each other since no 2 letters overlap on each other
 	rectangles = trainingHelper.removeOverlaps(rectangles)
-
 
 	# Sort rectangles so you can read them left to right, top to bottom
 	rectangles = trainingHelper.xsort(rectangles)
 
 	# Merge tibble of the I and J
 	# rectangles = trainingHelper.mergeT(rectangles) # combine tibble 
-
 
 	#For each rectangles identify the most likely character it resembles 
 	for (x,y,w,h) in rectangles:
@@ -75,8 +70,6 @@ def manRec(im, model, answers = []):
 		cv2.waitKey(33)
 		cv2.imshow('im',im)
 
-
-
 		roi = thresh[y:y+h,x:x+w]
 		#Number of extra values to append to size vector
 		num_Extra_Vals=0
@@ -84,7 +77,6 @@ def manRec(im, model, answers = []):
 		# Resize Region of Intrest into a size*size matrix of intesity values
 		# The default is 10 by 10 matrix
 		roismall = cv2.resize(roi,(size,size))
-
 
 		# Resize Pixel Intensity Matrix into a vector
 		# default is a 100 value vector of intensities
@@ -128,11 +120,14 @@ def manRec(im, model, answers = []):
 	cv2.imshow('out',out)
 	cv2.waitKey(0)
 
-#Input:Filename
-#Output:Runs the demo
+#Input:
+#	Filename
+#Output:
+#	Runs the demo
 def run(fileName,answersList=[]):
 	im = cv2.imread(fileName)
 	model = train('generalsamples.data', 'generalresponses.data')
 	print manRec(im,model,answersList)
 
 run('MachineLearning/alphabet.png',answers)
+
