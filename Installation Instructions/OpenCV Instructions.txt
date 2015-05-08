@@ -31,9 +31,9 @@ mv opencv-3.0.0-beta.zip opencv3
 cd opencv3 % change directory to opencv3
 
 mkdir build % make new build directory in opencv3 directory  
-cd build % change directory to build 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cd build % change directory to build 
 
 cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_ZLIB=ON -D BUILD_PYTHON_SUPPORT=ON ..
 
