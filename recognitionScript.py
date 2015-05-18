@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import string
-import trainingHelper
+from trainingHelper import *
 
 ###############   training part    ############### 
 
@@ -23,8 +23,9 @@ def train(samplesFile, responsesFile):
 numlist =  map(str, range(10))
 alphalistl = list(string.ascii_lowercase)
 alphalistC = list(string.ascii_lowercase)
-answers = alphalistC+alphalistl+numlist  
+answers = alphalistC+alphalistl+numlist
 
+print answers
 #Input:
 # 	Image file
 # 	Machine Learning Training Model
@@ -34,32 +35,33 @@ def manRec(im, model, answers = []):
 	correct = 1.0 # start at 1 to avoid divide by 0 error
 	notc = 0
 	size = 10
+	stringList = []
 
 	out = np.zeros(im.shape,np.uint8)
 	
 	# Convert image to Grayscale	
-	gray = trainingHelper.color2gray(im)
+	gray = color2gray(im)
 	
 	# Gaussian blur the Image to help edge detection
-	blur= trainingHelper.gaussianBlur(gray)
+	blur= gaussianBlur(gray)
 
 	# Run an adaptive threshold on Grayscale Image
-	thresh = trainingHelper.adapThreshold(blur)
+	thresh = adapThreshold(blur)
 	
 	# Find the Countours of White letters in the Black background of thresh (a grayscale image)
-	contours,hierarchy = trainingHelper.findCountours(thresh)
+	contours,hierarchy = findCountours(thresh)
 
 	# Convert outline of Countours into  4 point rectangles
-	rectangles = trainingHelper.findCountourAreas(contours,5) # leave out 1 if not combining tibble
+	rectangles = findCountourAreas(contours,5) # leave out 1 if not combining tibble
 	
 	# Remove the rectangles that overlap with each other since no 2 letters overlap on each other
-	rectangles = trainingHelper.removeOverlaps(rectangles)
+	rectangles = removeOverlaps(rectangles)
 
 	# Sort rectangles so you can read them left to right, top to bottom
-	rectangles = trainingHelper.xsort(rectangles)
+	rectangles = xsort(rectangles)
 
 	# Merge tibble of the I and J
-	# rectangles = trainingHelper.mergeT(rectangles) # combine tibble 
+	rectangles = mergeT(rectangles) # combine tibble 
 
 	#For each rectangles identify the most likely character it resembles 
 	for (x,y,w,h) in rectangles:
@@ -96,14 +98,14 @@ def manRec(im, model, answers = []):
 		
 		# Character that the ROI was recognized as
 		string = str(chr((results[0][0])))
+		stringList.append(string)
 		
-		#if there are answers to compare we display  them
+		#if there are answers to compare we display them
 		if (ansLen):
 			if(string==answers[ind%len(answers)]):
 				cv2.putText(out,string,(x,y+h),0,1,(0,255,0))
 				correct+=1
 			else:
-
 				cv2.putText(out,string,(x,y+h),0,1,(0,0,255))
 				notc+=1
 				
@@ -112,13 +114,15 @@ def manRec(im, model, answers = []):
 
 		ind+=1
 
-	print "Accuracy: ", correct/(correct+notc)
-
-
 	# Show results and wait until a key is pressed to exit
 	cv2.imshow('im',im)
 	cv2.imshow('out',out)
 	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+
+	print stringList
+	return "Accuracy: ", correct/(correct+notc)
+
 
 #Input:
 #	Filename
@@ -126,8 +130,8 @@ def manRec(im, model, answers = []):
 #	Runs the demo
 def run(fileName,answersList=[]):
 	im = cv2.imread(fileName)
-	model = train('generalsamples.data', 'generalresponses.data')
+	model = train('gs.data', 'gr.data')
 	print manRec(im,model,answersList)
 
-run('MachineLearning/alphabet.png',answers)
+run('Images/digitAlphabet.png',answers)
 

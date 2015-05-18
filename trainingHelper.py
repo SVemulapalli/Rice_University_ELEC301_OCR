@@ -34,6 +34,7 @@ def readImage(fileName):
 	imcopy = im.copy()
 	print "Read file:", fileName
 	return im, imcopy
+	
 #Input: 
 #	path directory for a Image file 
 #Output: 
@@ -231,3 +232,41 @@ def mergeT(orginal,Tibble_gap=5):
 def sortListedRect(rectangles,a=1,b=0):
 	rectangles = sorted(rectangles, key=lambda x: (x[a],x[b])) # sort by x,y values
 	return rectangles
+
+def comp(rect1,rect2,i,j):
+	if((rect2[1]-20)<rect1[1]<(rect2[1]+20)):
+		if(rect1[0]<(rect2[0])):
+			return i
+		else:
+			return j
+
+	elif(rect1[1]<(rect2[1])):
+		return i
+	else:
+		return j
+
+def xsort(rectangles):
+	newrectangles = []
+	sortedidx = []
+	lowtuple= [sys.maxsize,sys.maxsize]
+	lowindex = 0
+
+	for i in xrange(0,len(rectangles)):		
+		for j in xrange(0,len(rectangles)):
+			if(j not in sortedidx):
+				(y,x,w,h)=rectangles[j]
+				rect1=rectangles[j]
+				rect2=lowtuple
+				s=comp(rect1,rect2,0,j)
+
+				if(s==0):
+					lowtuple=(y,x)
+					lowindex=j
+
+		# print rectangles[lowindex],lowtuple,lowindex
+		lowtuple= [sys.maxsize,sys.maxsize]
+		sortedidx.append(lowindex)
+		newrectangles.append(rectangles[lowindex])
+
+	# print sortedidx
+	return newrectangles
