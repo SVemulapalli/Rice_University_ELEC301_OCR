@@ -45,8 +45,8 @@ def manualTrainRects(image,rectangles,thresh,keys=keys):
 	responses = responses.reshape((responses.size,1))
 	print "Training complete"
 	
-	np.savetxt('testsamples.data',samples)
-	np.savetxt('testresponses.data',responses)
+	np.savetxt('manualSamples.data',samples)
+	np.savetxt('manualResponses.data',responses)
 	print "Saved samples & responses"
 
 
@@ -94,7 +94,7 @@ def autoTrainRects(image,rectangles,thresh,keyName=chr(127),keyInt=127,keys=keys
 
 		responses = np.array(responses,np.float32)
 		responses = responses.reshape((responses.size,1))
-		print "Training complete for character", character
+		#print "Training complete for character", character
 		
 		make_sure_path_exists(folder)
 
@@ -106,29 +106,27 @@ def autoTrainRects(image,rectangles,thresh,keyName=chr(127),keyInt=127,keys=keys
 		# open(responsefile, 'a').close()
 		np.savetxt(responsefile,responses)
 
-		print "Saved samples & responses for character", character
+		#print "Saved samples & responses for character", character
 
 def mergeAutoMLdata(directory):
-	allFiles = getAllFiles(directory)
-	uniqueChar = set([char[0] for char in allFiles])
 
-	print "Merging Samples"
-	with open("generalSamples.data", "a") as outfile:
-		for char in uniqueChar:
-			sampleFile = directory+char+'-Samples.data'
-			print sampleFile
-	        for line in open(sampleFile, "r"):
-	            outfile.write(line)
+	print "Merging Samples..."
+	allFiles = getAllFiles(directory, '-Samples.data')
 
-	print "Merging Responses"
-	with open("generalResponses.data", "a") as outfile:
-		for char in uniqueChar:
-			responseFile = directory+char+'-Responses.data'
-			print responseFile
-	        for line in open(responseFile, "r"):
-	            outfile.write(line)
+	with open("autoSamples.data", "w") as soutfile:
+		for sampleFile in allFiles:
+			for line in open(directory+sampleFile, "r"):
+				soutfile.write(line)
 
-	print "generalResponses and generalSamples data files created"
+	print "Merging Responses..."
+	allFiles = getAllFiles(directory, '-Responses.data')
+
+	with open("autoResponses.data", "w") as routfile:
+		for responseFile in allFiles:
+			for line in open(directory+responseFile, "r"):
+				routfile.write(line)
+
+	print "All Responses and Samples data files merged!"
 
 #Input: 
 #	path to image file
@@ -157,7 +155,6 @@ def manualRun(fileName):
 def autoRun(directory):
 	allFiles = getAllFiles(directory)
 	for files in allFiles:
-		print "Running training on", files
 		fullpath = directory+'/'+files
 		im,im3 = readImage(fullpath)
 		justName, asciiKey = readFilename(files)
@@ -175,8 +172,8 @@ def autoRun(directory):
 	
 		autoTrainRects(im, rectangles, thresh, justName, asciiKey)
 
-	#mergeAutoMLdata('ML/')
+	mergeAutoMLdata('ML/') # merge all character data files
 
-manualRun('Images/digitAlphabet.png')
-#autoRun('Images/Alphabet')
-print "Training completed!"
+# manualRun('Images/digitAlphabet.png')
+autoRun('Images/Alphabet')
+# print "Training completed!"

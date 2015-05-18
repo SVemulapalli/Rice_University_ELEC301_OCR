@@ -20,20 +20,20 @@ def train(samplesFile, responsesFile):
 
 ############################# testing part  #########################
 
+# define answer key [manual]
 numlist =  map(str, range(10))
 alphalistl = list(string.ascii_lowercase)
 alphalistC = list(string.ascii_lowercase)
 answers = alphalistC+alphalistl+numlist
 
-print answers
 #Input:
 # 	Image file
 # 	Machine Learning Training Model
 def manRec(im, model, answers = []):
 	ansLen = (len(answers) > 0)
 	ind = 0 # Answer index used to match rect to answer
-	correct = 1.0 # start at 1 to avoid divide by 0 error
-	notc = 0
+	correct = 0 # start at 1 to avoid divide by 0 error
+	notCorrect = 0
 	size = 10
 	stringList = []
 
@@ -69,7 +69,7 @@ def manRec(im, model, answers = []):
 		# Show a light  green Rectangle over onces we are about to process/have
 		cv2.rectangle(im,(x,y),(x+w,y+h),(0,255,0),2)
 		# Waitkey() before a show is required to update it
-		cv2.waitKey(33)
+		cv2.waitKey(15)
 		cv2.imshow('im',im)
 
 		roi = thresh[y:y+h,x:x+w]
@@ -107,12 +107,14 @@ def manRec(im, model, answers = []):
 				correct+=1
 			else:
 				cv2.putText(out,string,(x,y+h),0,1,(0,0,255))
-				notc+=1
+				notCorrect+=1
 				
 		else:
 			cv2.putText(out,string,(x,y+h),0,1,(0,255,255))
 
 		ind+=1
+
+	accuracy = float(correct)/(correct+notCorrect)
 
 	# Show results and wait until a key is pressed to exit
 	cv2.imshow('im',im)
@@ -120,8 +122,8 @@ def manRec(im, model, answers = []):
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
-	print stringList
-	return "Accuracy: ", correct/(correct+notc)
+	#print stringList
+	return accuracy
 
 
 #Input:

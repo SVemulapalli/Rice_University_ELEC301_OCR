@@ -8,11 +8,15 @@ import bisect
 
 #Input:
 # path to directory
+# Only include files in directory, don't include folders
 #Output
 #	Sorted list of all files in a given directory
-def getAllFiles(directory=getcwd()):
-	onlyfiles = sorted([ f for f in listdir(directory) if isfile(join(directory,f)) ]) # only add files in directory, don't include folders
-	return onlyfiles
+def getAllFiles(directory=getcwd(), extension="", prefix=""):
+	onlyFiles = sorted([ f for f in listdir(directory) if 
+		isfile(join(directory,f)) 
+		& f.endswith(extension) 
+		& f.startswith(prefix) ]) 
+	return onlyFiles
 
 #Input:
 # directory path
@@ -32,9 +36,9 @@ def make_sure_path_exists(path):
 def readImage(fileName):
 	im = cv2.imread(fileName)
 	imcopy = im.copy()
-	print "Read file:", fileName
+	#print "Read file:", fileName
 	return im, imcopy
-	
+
 #Input: 
 #	path directory for a Image file 
 #Output: 
@@ -104,7 +108,9 @@ def adapThreshold(image, MaxValue=255, Method=cv2.ADAPTIVE_THRESH_GAUSSIAN_C, Th
 #	Retrival Method 		
 #		cv2.CV_RETR_EXTERNAL retrieves only the extreme outer contours. It sets hierarchy[i][2]=hierarchy[i][3]=-1 for all the contours.
 # 		cv2.CV_RETR_LIST retrieves all of the contours without establishing any hierarchical relationships.
-# 		cv2.CV_RETR_CCOMP retrieves all of the contours and organizes them into a two-level hierarchy. At the top level, there are external boundaries of the components. At the second level, there are boundaries of the holes. If there is another contour inside a hole of a connected component, it is still put at the top level.
+# 		cv2.CV_RETR_CCOMP retrieves all of the contours and organizes them into a two-level hierarchy. 
+#			At the top level, there are external boundaries of the components. 
+#			At the second level, there are boundaries of the holes. If there is another contour inside a hole of a connected component, it is still put at the top level.
 # 		cv2.CV_RETR_TRE
 # Output:
 # 	Countours: list of all the contours in the image
@@ -224,7 +230,7 @@ def mergeT(orginal,Tibble_gap=5):
 		rectangles.pop(k)
 	return rectangles
 
-#Input:
+#Input: [Deprecated]
 #	Rectangles: List of rectangles contours
 # 	Simple sorting by either lowest x then y value or vice-versa, [0:1] = [x:y]
 #Output:
@@ -233,13 +239,13 @@ def sortListedRect(rectangles,a=1,b=0):
 	rectangles = sorted(rectangles, key=lambda x: (x[a],x[b])) # sort by x,y values
 	return rectangles
 
+# Better sorting of x,y left to right ordering
 def comp(rect1,rect2,i,j):
 	if((rect2[1]-20)<rect1[1]<(rect2[1]+20)):
 		if(rect1[0]<(rect2[0])):
 			return i
 		else:
 			return j
-
 	elif(rect1[1]<(rect2[1])):
 		return i
 	else:
