@@ -12,6 +12,7 @@ keys = [i for j in (range(33,65),range(96,127)) for i in j] # allowed ascii keys
 def manualTrainRects(image,rectangles,thresh,keys=keys):
 	samples =  np.empty((0,100))
 	responses = []
+	folder = 'Data/'
 
 	for (x,y,w,h) in rectangles:
 		cv2.rectangle(image,(x,y),(x+w,y+h),(0,0,255),2)
@@ -45,8 +46,9 @@ def manualTrainRects(image,rectangles,thresh,keys=keys):
 	responses = responses.reshape((responses.size,1))
 	print "Training complete"
 	
-	np.savetxt('manualSamples.data',samples)
-	np.savetxt('manualResponses.data',responses)
+	ake_sure_path_exists(folder)
+	np.savetxt(folder+'manualSamples.data',samples)
+	np.savetxt(folder+'manualResponses.data',responses)
 	print "Saved samples & responses"
 
 
@@ -81,11 +83,6 @@ def autoTrainRects(image,rectangles,thresh,keyName=chr(127),keyInt=127,keys=keys
 
 			if key == 27:  # (escape to quit)
 				sys.exit()
-			elif key == 13: # return key
-				break
-			elif key == 127: # delete key 
-				break # functionality not implemented yet but I want it to remove previous and retrain from previous
-				print "Error!!!"
 			elif key in keys:
 				responses.append(key)
 				sample = roismall.reshape((1,100))
@@ -109,11 +106,13 @@ def autoTrainRects(image,rectangles,thresh,keyName=chr(127),keyInt=127,keys=keys
 		#print "Saved samples & responses for character", character
 
 def mergeAutoMLdata(directory):
+	folder = 'Data/'
+	make_sure_path_exists(folder)
 
 	print "Merging Samples..."
 	allFiles = getAllFiles(directory, '-Samples.data')
 
-	with open("autoSamples.data", "w") as soutfile:
+	with open(folder+"autoSamples.data", "w") as soutfile:
 		for sampleFile in allFiles:
 			for line in open(directory+sampleFile, "r"):
 				soutfile.write(line)
@@ -121,7 +120,7 @@ def mergeAutoMLdata(directory):
 	print "Merging Responses..."
 	allFiles = getAllFiles(directory, '-Responses.data')
 
-	with open("autoResponses.data", "w") as routfile:
+	with open(folder+"autoResponses.data", "w") as routfile:
 		for responseFile in allFiles:
 			for line in open(directory+responseFile, "r"):
 				routfile.write(line)

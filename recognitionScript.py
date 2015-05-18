@@ -125,15 +125,13 @@ def manRec(im, model, answers = []):
 	#print stringList
 	return accuracy
 
-
 #Input:
 #	Filename
 #Output:
 #	Runs the demo
 def run(fileName,answersList=[]):
 	im = cv2.imread(fileName)
-	model = train('gs.data', 'gr.data')
+	model = train('Data/autoSamples.data', 'Data/autoResponses.data')
 	print manRec(im,model,answersList)
 
 run('Images/digitAlphabet.png',answers)
-
