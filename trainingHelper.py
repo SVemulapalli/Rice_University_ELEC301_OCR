@@ -8,6 +8,14 @@ import bisect
 from datetime import datetime
 
 #Input:
+#   None
+#Output:
+#   Datetime represented with Year Month Day T Hour Minute Second MS
+#   No formating besides 'T' between Date and Time
+def noFormatDatetime():
+    return datetime.now().strftime('%Y%m%dT%H%M%S%f')
+
+#Input:
 # path to directory
 # Only include files in directory, don't include folders
 #Output
@@ -60,9 +68,49 @@ def writeImage(image, filename=datetime.now().strftime('%Y%m%dT%H%M%S%f'), exten
 #   Tuple containing the image object and a copy
 def readFilename(filename):
     justName = splitext(filename)[0] # remove extension
+    # Remove this in future update to support capital and lowercase
     justName = justName.lower() # convert to lowercase
     asciiKey = ord(justName)
     return justName, asciiKey
+
+#Input:
+#   Sample data file,Response data File
+#Output:
+#   KNearest neighboor Model made from learning from the two files
+def trainKNNmodel(samplesFile, responsesFile):
+    samples = np.loadtxt(samplesFile,np.float32)
+    responses = np.loadtxt(responsesFile,np.float32)
+    responses = responses.reshape((responses.size,1))
+
+    model = cv2.KNearest()
+    model.train(samples,responses)
+
+    return model
+
+#Input:
+#   Training model
+#   KNN not supported
+# (Optional Parameters):
+#   filename = default is datetimestamp saved as XML
+#Output:
+#   path and filename model was saved to
+def savemodel(model, modelFileName=noFormatDatetime()+".xml"):
+    folder = 'Model/'
+    make_sure_path_exists(folder)
+    pathModel = folder+modelFileName
+    model.save(pathModel)
+    return pathModel
+
+#Input:
+#   path and filename of saved training model
+#   KNN not supported
+#Output:
+#   loads up KNN model and returns it
+def loadmodel(modelFileName):
+    model = cv2.SVM()
+    model.load(modelFileName)
+    return model
+
 
 #Input:
 #   path directory for a Image file

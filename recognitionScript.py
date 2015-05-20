@@ -3,11 +3,11 @@ import numpy as np
 import string
 from trainingHelper import *
 
-###############   training part    ############### 
+###############   training part    ###############
 
-#Input: 
+#Input:
 #	Sample file,Response File
-#Output: 
+#Output:
 #	KNearest neighboor Model made from learning from the two files
 def train(samplesFile, responsesFile):
 	samples = np.loadtxt(samplesFile,np.float32)
@@ -38,22 +38,22 @@ def manRec(im, model, answers = []):
 	stringList = []
 
 	out = np.zeros(im.shape,np.uint8)
-	
-	# Convert image to Grayscale	
+
+	# Convert image to Grayscale
 	gray = color2gray(im)
-	
+
 	# Gaussian blur the Image to help edge detection
 	blur= gaussianBlur(gray)
 
 	# Run an adaptive threshold on Grayscale Image
 	thresh = adapThreshold(blur)
-	
+
 	# Find the Countours of White letters in the Black background of thresh (a grayscale image)
 	contours,hierarchy = findCountours(thresh)
 
 	# Convert outline of Countours into  4 point rectangles
 	rectangles = findCountourAreas(contours,5) # leave out 1 if not combining tibble
-	
+
 	# Remove the rectangles that overlap with each other since no 2 letters overlap on each other
 	rectangles = removeOverlaps(rectangles)
 
@@ -61,9 +61,9 @@ def manRec(im, model, answers = []):
 	rectangles = xsort(rectangles)
 
 	# Merge tibble of the I and J
-	rectangles = mergeT(rectangles) # combine tibble 
+	rectangles = mergeT(rectangles) # combine tibble
 
-	#For each rectangles identify the most likely character it resembles 
+	#For each rectangles identify the most likely character it resembles
 	for (x,y,w,h) in rectangles:
 
 		# Show a light  green Rectangle over onces we are about to process/have
@@ -95,11 +95,11 @@ def manRec(im, model, answers = []):
 
 		# Find nearest vector using the Model's nearest KNN algorithm
 		retval, results, neigh_resp, dists = model.find_nearest(roismall, k = 1)
-		
+
 		# Character that the ROI was recognized as
 		string = str(chr((results[0][0])))
 		stringList.append(string)
-		
+
 		#if there are answers to compare we display them
 		if (ansLen):
 			if(string==answers[ind%len(answers)]):
@@ -108,7 +108,7 @@ def manRec(im, model, answers = []):
 			else:
 				cv2.putText(out,string,(x,y+h),0,1,(0,0,255))
 				notCorrect+=1
-				
+
 		else:
 			cv2.putText(out,string,(x,y+h),0,1,(0,255,255))
 
@@ -131,7 +131,7 @@ def manRec(im, model, answers = []):
 #	Runs the demo
 def run(fileName,answersList=[]):
 	im = cv2.imread(fileName)
-	model = train('Data/autoSamples.data', 'Data/autoResponses.data')
+	model = trainKNNmodel('Data/autoSamples.data', 'Data/autoResponses.data')
 	print manRec(im,model,answersList)
 
 run('Images/digitAlphabet.png',answers)
